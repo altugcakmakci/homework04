@@ -1,0 +1,23 @@
+:root{
+    font-family: "Roboto", sans-serif;
+}
+
+header {
+    display: flexbox;
+    font-size:24px;
+    margin:20px;
+}
+
+header p {
+    display:inline
+}
+
+.time {
+    float: right;
+}
+
+.display-body {
+    font-size:36px;
+    text-align: center;
+    padding:30px;
+}
