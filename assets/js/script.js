@@ -3,9 +3,9 @@ let timeEl = document.querySelector(".time");
 let viewHsEl = document.querySelector(".view-hs");
 
 let quizQuestions = {
-    questions : ["How do you ___?","Is it possible to ___?","Did I ask you that ____?","What is the capital of ____?"],
-    options : [["Me","You","Him","Her"],["Dog","Cat","Horse","Snake"],["Bmw","Toyota","Honda","Subaru"],["45","66","88","203"]],
-    answers : [0,3,2,1]
+    questions : ["Inside which HTML element do we put the JavaScript?","Which of the following type of variable is visible only within a function where it is defined?","Which of the following function of String object combines the text of two strings and returns a new string?","Which of the following function of Array object creates a new array with the results of calling a provided function on every element in this array?","Which of the following function of Array object adds and/or removes elements from an array?"],
+    options : [["<js>","<javascript>","<script>","<scripting>"],["Global variable","Local variable","Both","None"],["add","merge","concat","append"],["push","join","pop","map"],["toSource","sort","splice","unshift"]],
+    answers : [2,1,2,3,2]
 }
 
 let nextQuestion = 0;
@@ -21,7 +21,7 @@ let user = {
 
 function init(){
     displayBodyEl.innerHTML="";
-    userScore = 0;
+    user.score = 0;
     correctAnswer = -1;
     secondsLeft = 60;
     let newH1El = document.createElement("h1");
@@ -72,7 +72,7 @@ function setTime() {
             // Stops execution of action at set interval
             clearInterval(timerInterval);
             // Calls function to create and append image
-            //timerEnded();
+            endGame();
         }
   
     }, 1000);
@@ -232,6 +232,16 @@ function endGame (){
 
 }
 
+function compare( a, b ) {
+    if ( a.score > b.score ){
+      return -1;
+    }
+    if ( a.score < b.score ){
+      return 1;
+    }
+    return 0;
+  }
+
 function displayHighScores() {
     displayBodyEl.innerHTML="";
 
@@ -244,6 +254,11 @@ function displayHighScores() {
 
     let scores = JSON.parse(localStorage.getItem("Scores")|| "[]");
     console.log(scores);
+    scores.sort(compare);
+    console.log("Sorted");
+    console.log(scores);
+    localStorage.removeItem("Scores");
+    localStorage.setItem("Scores",JSON.stringify(scores));
     if (scores!=null){
         let newUl = document.createElement("ol");
         //newUl.setAttribute("style","list-style-type:none");
