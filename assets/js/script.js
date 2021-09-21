@@ -21,6 +21,7 @@ let user = {
 
 function init(){
     displayBodyEl.innerHTML="";
+    viewHsEl.textContent = "View High Scores";
     user.score = 0;
     correctAnswer = -1;
     secondsLeft = 60;
@@ -39,12 +40,7 @@ function init(){
 
     startButton = document.createElement("button");
     startButton.textContent = "Start Quiz";
-    startButton.style.backgroundColor = "purple";
-    startButton.style.color = "white";
-    startButton.style.fontSize = "24px";
-    startButton.style.width = "200px";
-    startButton.style.marginLeft = "auto";
-    startButton.style.marginRight = "auto";
+    startButton.className = "quiz-button";
     startButton.addEventListener("click", function(event) {
         startQuiz();
     
@@ -55,6 +51,7 @@ function init(){
 
 function startQuiz() {
     displayBodyEl.innerHTML="";
+    viewHsEl.textContent = "";
     nextQuestion = 0;
 
     displayNextQuestion();
@@ -63,15 +60,12 @@ function startQuiz() {
 }
 
 function setTime() {
-    // Sets interval in variable
     timerInterval = setInterval(function() {
         secondsLeft--;
         timeEl.textContent = "Time: " +secondsLeft ;
   
         if(secondsLeft === 0) {
-            // Stops execution of action at set interval
             clearInterval(timerInterval);
-            // Calls function to create and append image
             endGame();
         }
   
@@ -102,14 +96,8 @@ function displayNextQuestion() {
         let li = document.createElement("li");
         li.textContent = quizQuestions.options[nextQuestion][i];
         li.setAttribute("data-index", i);
-        li.style.fontSize = "24px";
-        li.style.width = "50%";
-        li.style.marginLeft = "auto";
-        li.style.marginRight = "auto";
-        li.style.backgroundColor = "purple";
-        li.style.color = "white";
-        li.style.padding = "10px";
-        li.style.marginTop = "10px";
+        li.className="option-list";
+
         newUl.appendChild(li);
     }
     correctAnswer = quizQuestions.answers[nextQuestion];
@@ -126,7 +114,6 @@ function displayNextQuestion() {
         let element = event.target;
         if (element.matches("li")) {
           let index = element.getAttribute("data-index");
-          console.log("Pressed line "+index);
           if (index==correctAnswer){
               userCorrect();
           } else {
@@ -135,6 +122,10 @@ function displayNextQuestion() {
           isQuestionAnswered = true;
           let nextButton = document.createElement("button");
           nextButton.textContent = "Next Question";
+          if (nextQuestion===quizQuestions.questions.length-1){
+            nextButton.textContent = "Done!";
+          }
+          nextButton.className = "quiz-button";
           nextButton.addEventListener("click", function (event) {
             nextQuestion++;
             displayNextQuestion();
@@ -142,9 +133,6 @@ function displayNextQuestion() {
           displayBodyEl.appendChild(nextButton); 
         }
       });
-
-    
-
 }
 
 function userCorrect() {
@@ -154,7 +142,6 @@ function userCorrect() {
 
 function userWrong() {
     newResult.textContent="Wrong!";
-    user.score--;
     secondsLeft -= 10;
     if (secondsLeft<0){
         secondsLeft=0;
@@ -208,23 +195,31 @@ function endGame (){
 
     let newDivSubmit = document.createElement("input");
     newDivSubmit.type = "submit";
-    newDivSubmit.style.fontSize = "20px";
-    newDivSubmit.style.width = "100px";
-    newDivSubmit.style.marginLeft = "auto";
-    newDivSubmit.style.marginRight = "auto";
-    newDivSubmit.style.padding = "2px";
-    newDivSubmit.style.backgroundColor = "purple";
-    newDivSubmit.style.color = "white";
+    newDivSubmit.className = "quiz-button";
+    newDivSubmit.style.margin = "5px";
+
     newDiv.appendChild(newDivSubmit);
 
     newDivSubmit.addEventListener("click", function(event) {
         user.initials = newDivInput.value;
-        console.log(user);
         let scores = JSON.parse(localStorage.getItem("Scores")|| "[]");
         if (scores==null){
             scores = [];
         }
-        scores.push(user);
+        let initialFound = false;
+        for(let i=0;i<scores.length;i++){
+            if (scores[i].initials===user.initials){
+                initialFound= true;
+                if (scores[i].score < user.score){
+                    scores[i].score = user.score;
+                }
+
+            }
+        }
+        if (!initialFound){
+            scores.push(user);
+        }
+        
         localStorage.setItem("Scores",JSON.stringify(scores));
         displayHighScores();
     });
@@ -244,6 +239,8 @@ function compare( a, b ) {
 
 function displayHighScores() {
     displayBodyEl.innerHTML="";
+    timeEl.textContent = "";
+    viewHsEl.textContent = "";
 
     let newh2 = document.createElement("h2");
     newh2.textContent = "High Scores";
@@ -253,34 +250,22 @@ function displayHighScores() {
     displayBodyEl.appendChild(newh2);
 
     let scores = JSON.parse(localStorage.getItem("Scores")|| "[]");
-    console.log(scores);
-    scores.sort(compare);
-    console.log("Sorted");
-    console.log(scores);
-    localStorage.removeItem("Scores");
-    localStorage.setItem("Scores",JSON.stringify(scores));
     if (scores!=null){
-        let newUl = document.createElement("ol");
-        //newUl.setAttribute("style","list-style-type:none");
-        displayBodyEl.appendChild(newUl);
+        scores.sort(compare);
+        localStorage.removeItem("Scores");
+        localStorage.setItem("Scores",JSON.stringify(scores));
+
+        let newOl = document.createElement("ol");
+        displayBodyEl.appendChild(newOl);
 
         for(let i=0;i<scores.length;i++){
-            let object1 = JSON.parse(localStorage.getItem("Scores"))[i];
-            console.log(object1);
+            let scoreObj = JSON.parse(localStorage.getItem("Scores"))[i];
             let li = document.createElement("li");
-            let j = i +1;
-            li.textContent = j + ". " + object1.initials + "     "+object1.score;
+            li.innerHTML= scoreObj.initials + " <span class='score'>"+scoreObj.score+"</span>";
             li.setAttribute("data-index", i);
-            li.style.fontSize = "24px";
-            li.style.width = "50%";
-            li.style.marginLeft = "auto";
-            li.style.marginRight = "auto";
-            li.style.backgroundColor = "purple";
-            li.style.color = "white";
-            li.style.padding = "10px";
-            li.style.marginTop = "10px";
-            li.style.textAlign = "left";
-            newUl.appendChild(li);
+            li.className = "score-list";
+
+            newOl.appendChild(li);
         }
         
     }
@@ -294,25 +279,15 @@ function displayHighScores() {
 
     let goBackButton = document.createElement("button");
     goBackButton.textContent = "Go back";
-    goBackButton.style.backgroundColor = "purple";
-    goBackButton.style.color = "white";
-    goBackButton.style.fontSize = "24px";
-    goBackButton.style.width = "200px";
-    goBackButton.style.marginLeft = "auto";
-    goBackButton.style.marginRight = "auto";
+    goBackButton.className = "quiz-button";
     goBackButton.addEventListener("click", function(event) {
         init();
     });
     newDiv.appendChild(goBackButton);
 
     let clearHsButton = document.createElement("button");
-    clearHsButton.textContent = "Clear high scores";
-    clearHsButton.style.backgroundColor = "purple";
-    clearHsButton.style.color = "white";
-    clearHsButton.style.fontSize = "24px";
-    clearHsButton.style.width = "300px";
-    clearHsButton.style.marginLeft = "auto";
-    clearHsButton.style.marginRight = "auto";
+    clearHsButton.textContent = "Clear scores";
+    clearHsButton.className = "quiz-button";
     clearHsButton.addEventListener("click", function(event) {
         localStorage.removeItem("Scores");
         displayHighScores();

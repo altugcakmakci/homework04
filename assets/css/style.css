@@ -21,3 +21,46 @@ header p {
     text-align: center;
     padding:30px;
 }
+
+.quiz-button {
+    border: solid 3px purple;
+    border-radius: 8px;
+    background-color: pink;
+    background-image: linear-gradient(purple, pink, purple);
+    color: darkblue;
+    font-size: 24px;
+    width : 200px;
+    margin-left : auto;
+    margin-right : auto;
+    height: 50px;
+}
+
+.option-list {
+    font-size : 24px;
+    width : 50%;
+    margin-left:  auto;
+    margin-right : auto;
+    background-color : purple;
+    color : white;
+    padding : 10px;
+    margin-top : 10px;
+
+}
+
+.score-list {
+    font-size : 24px;
+    width : 50%;
+    margin-left:  auto;
+    margin-right : auto;
+    background-color : rgb(214, 140, 214);
+    color : black;
+    padding : 10px;
+    list-style-position: inside;
+    margin-top : 10px;
+    text-align : left;
+
+}
+
+.score {
+    float: right;
+}
